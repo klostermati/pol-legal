@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authorization complete</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; color: #333; }
+        h2 { color: #111; }
+        #code-box {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 16px;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+            margin: 16px 0;
+        }
+        button {
+            background: #111;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover { background: #333; }
+        #error { color: #c00; }
+    </style>
+</head>
+<body>
+    <h2>Authorization complete</h2>
+    <div id="success" style="display:none">
+        <p>Copy this code and paste it into your terminal:</p>
+        <div id="code-box"></div>
+        <button onclick="copyCode()">Copy to clipboard</button>
+        <p style="font-size:0.85em;color:#999;margin-top:12px">
+            This code is single-use and expires in a few minutes.
+            You can close this tab after pasting it.
+        </p>
+    </div>
+    <div id="error" style="display:none">
+        <p>No authorization code found in URL.</p>
+        <pre id="raw-params"></pre>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        if (code) {
+            document.getElementById('success').style.display = 'block';
+            document.getElementById('code-box').textContent = code;
+        } else {
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('raw-params').textContent = window.location.search || '(no query string)';
+        }
+
+        function copyCode() {
+            navigator.clipboard.writeText(document.getElementById('code-box').textContent)
+                .then(() => { document.querySelector('button').textContent = 'Copied!'; })
+                .catch(() => { alert('Could not copy — select the text manually.'); });
+        }
+    </script>
+</body>
+</html>
